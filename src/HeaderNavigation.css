@@ -1,0 +1,11 @@
+.HeaderNavigation {
+	text-align: left;
+	padding: 25px;
+	border: 1px solid grey;
+	background-color: lightgrey;
+}
+
+.HeaderNavigation-link {
+	margin-left: 3px;
+	margin-right: 3px;
+}
