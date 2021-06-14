@@ -1,12 +1,14 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import PostSummary from './PostSummary';
-import './PostsList.css'
+import './PostsList.css';
 
-const PostsList = ({ blogPosts }) => {
+const PostsList = () => {
+	const { posts } = useSelector(store => store);
 	return (
-		<div className='PostsList'>
-			{blogPosts.map(post => (
-				<PostSummary key={post.id} id={post.id} title={post.title} description={post.description} />
+		<div className="PostsList">
+			{Object.keys(posts).map(id => (
+				<PostSummary key={id} id={id} title={posts[id].title} description={posts[id].description} />
 			))}
 		</div>
 	);

@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+
 import { v4 as uuid } from 'uuid';
 import './NewPostForm.css';
+import { addComment } from './actions';
 
-const NewCommentForm = ({ addComment, postId }) => {
+const NewCommentForm = ({ postId }) => {
 	let INITIAL_STATE = {
 		comment : '',
 		id      : uuid()
 	};
-
+	const dispatch = useDispatch();
 	const [ formData, setFormData ] = useState(INITIAL_STATE);
 
 	const handleChange = e => {
@@ -20,7 +23,7 @@ const NewCommentForm = ({ addComment, postId }) => {
 
 	const handleSubmit = e => {
 		e.preventDefault();
-		addComment(postId, formData);
+		dispatch(addComment(postId, formData));
 		setFormData(INITIAL_STATE);
 	};
 

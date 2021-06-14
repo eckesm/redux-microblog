@@ -1,29 +1,35 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
 import NewPostForm from './NewPostForm';
 import NewCommentForm from './NewCommentForm';
+import { deletePost, deleteComment } from './actions';
 
-const PostDetail = ({ blogPosts, updatePost, deletePost, addComment, deleteComment }) => {
+const PostDetail = () => {
+	const { posts } = useSelector(store => store);
 	const { postId } = useParams();
 	const [ editingPost, setEditingPost ] = useState(false);
+	const history = useHistory();
+	const dispatch = useDispatch();
 
-	const editPost = () => {
+	const updateThisPost = () => {
 		setEditingPost(true);
 	};
 
+	const deleteThisPost = postId => {
+		dispatch(deletePost(postId));
+		history.push('/');
+	};
+
 	let post = null;
-	for (let i = 0; i < blogPosts.length; i++) {
-		if (blogPosts[i].id === postId) {
-			post = blogPosts[i];
-		}
+	if (postId in posts){
+		post =posts[postId]
+	} else{
+		return <h1>No post with the entered ID.</h1>
 	}
 
 	if (editingPost) {
-		return <NewPostForm updatePost={updatePost} post={post} />;
-	}
-
-	if (post === null) {
-		return <h1>No post with the entered ID.</h1>;
+		return <NewPostForm postId={postId} />;
 	}
 
 	const comments = post.comments || [];
@@ -34,18 +40,18 @@ const PostDetail = ({ blogPosts, updatePost, deletePost, addComment, deleteComme
 			<h5>{post.description}</h5>
 			<p>{post.body}</p>
 			<div>
-				<button onClick={editPost}>Edit</button>
-				<button onClick={() => deletePost(post.id)}>Delete</button>
+				<button onClick={updateThisPost}>Edit</button>
+				<button onClick={() => deleteThisPost(postId)}>Delete</button>
 			</div>
 			<div>
 				<h4>Comments</h4>
 				{comments.map(comment => (
 					<div key={comment.id}>
 						<p>{comment.comment}</p>
-						<button onClick={() => deleteComment(post.id, comment.id)}>x</button>
+						<button onClick={() => dispatch(deleteComment(postId, comment.id))}>x</button>
 					</div>
 				))}
-				<NewCommentForm addComment={addComment} postId={post.id} />
+				<NewCommentForm postId={postId} />
 			</div>
 		</div>
 	);

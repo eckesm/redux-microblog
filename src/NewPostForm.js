@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { v4 as uuid } from 'uuid';
+import { addPost, updatePost } from './actions';
 import './NewPostForm.css';
 
-const NewPostForm = ({ addPost, updatePost, post }) => {
+const NewPostForm = ({ postId }) => {
+	const dispatch = useDispatch();
+	const { posts } = useSelector(store => store);
+
 	let INITIAL_STATE = {
 		title       : '',
 		description : '',
 		body        : '',
-		id          : uuid()
+		comments    : []
 	};
-	if (post) {
+	if (postId) {
 		INITIAL_STATE = {
-			title       : post.title,
-			description : post.description,
-			body        : post.body,
-			id          : post.id
+			title       : posts[postId].title,
+			description : posts[postId].description,
+			body        : posts[postId].body,
+			comments    : posts[postId].comments
 		};
 	}
 
@@ -32,11 +36,11 @@ const NewPostForm = ({ addPost, updatePost, post }) => {
 
 	const handleSubmit = e => {
 		e.preventDefault();
-		if (!post) {
-			addPost(formData);
+		if (!postId) {
+			dispatch(addPost(formData));
 		}
 		else {
-			updatePost(formData);
+			dispatch(updatePost(postId, formData));
 		}
 		history.push('/');
 	};
@@ -47,8 +51,8 @@ const NewPostForm = ({ addPost, updatePost, post }) => {
 
 	return (
 		<form className="NewPostForm" onSubmit={handleSubmit}>
-			{!post && <h1>New Post</h1>}
-			{post && <h1>Edit Post</h1>}
+			{!postId && <h1>New Post</h1>}
+			{postId && <h1>Edit Post</h1>}
 
 			<div className="NewPostForm-input_group">
 				<label htmlFor="title">Title:</label>
@@ -78,12 +82,12 @@ const NewPostForm = ({ addPost, updatePost, post }) => {
 				/>
 			</div>
 			<div className="NewPostForm-buttons_div">
-				{!post && (
+				{!postId && (
 					<button className="NewPostForm-button" type="submit">
 						Save
 					</button>
 				)}
-				{post && (
+				{postId && (
 					<button className="NewPostForm-button" type="submit">
 						Update
 					</button>
