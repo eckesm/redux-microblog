@@ -11,15 +11,14 @@ const NewPostForm = ({ postId }) => {
 	let INITIAL_STATE = {
 		title       : '',
 		description : '',
-		body        : '',
-		comments    : []
+		body        : ''
 	};
 	if (postId) {
 		INITIAL_STATE = {
+			id          : posts[postId].id,
 			title       : posts[postId].title,
 			description : posts[postId].description,
-			body        : posts[postId].body,
-			comments    : posts[postId].comments
+			body        : posts[postId].body
 		};
 	}
 
@@ -40,7 +39,7 @@ const NewPostForm = ({ postId }) => {
 			dispatch(addPost(formData));
 		}
 		else {
-			dispatch(updatePost(postId, formData));
+			dispatch(updatePost(formData));
 		}
 		history.push('/');
 	};

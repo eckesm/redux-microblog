@@ -1,38 +1,31 @@
-import { ADD_POST, UPDATE_POST, DELETE_POST, ADD_COMMENT, DELETE_COMMENT } from './actionTypes';
-import { v4 as uuid } from 'uuid';
+import {
+	ADD_POST,
+	UPDATE_POST,
+	DELETE_POST,
+	ADD_COMMENT,
+	DELETE_COMMENT,
+	FETCH_TITLES,
+	FETCH_POST
+} from './actionTypes';
 
 const INITIAL_STATE = {
-	posts : {
-		initial1 : {
-			title       : 'My First Post',
-			description : 'What I am doing right now!',
-			body        :
-				'Well, to be honest, I am just working on project for this coding bootcamp... and listening to music... while my mom makes dinner in the kitchen.  It is also raining!',
-			comments    : [
-				{ comment: 'Wow this is a good post!', id: 'comment1' },
-				{ comment: 'I agree with you there.', id: 'comment2' }
-			]
-		},
-		initial2 : {
-			title       : 'My Second Post',
-			description : 'Getting ready for my call with Paritosh',
-			body        : 'I should really try to finish up some of this project before we chat on Skype later!',
-			comments    : []
-		}
-	}
+	posts  : {},
+	titles : [],
+	error  : false
 };
+
 function rootReducer(state = INITIAL_STATE, action) {
 	switch (action.type) {
 		case ADD_POST:
 			return {
 				...state,
-				posts : { ...state.posts, [uuid()]: action.newPost }
+				posts : { ...state.posts, [action.post.id]: action.post }
 			};
 
 		case UPDATE_POST:
 			return {
 				...state,
-				posts : { ...state.posts, [action.postId]: action.updatedPost }
+				posts : { ...state.posts, [action.post.id]: action.post }
 			};
 
 		case DELETE_POST:
@@ -59,6 +52,24 @@ function rootReducer(state = INITIAL_STATE, action) {
 			return {
 				...state,
 				posts : { ...state.posts, [action.postId]: removeCommentPost }
+			};
+
+		case FETCH_TITLES:
+			return {
+				...state,
+				titles : action.titles
+			};
+
+		case FETCH_POST:
+			return {
+				...state,
+				posts : { ...state.posts, [action.post.id]: action.post }
+			};
+
+		case 'ERROR':
+			return {
+				...state,
+				error : true
 			};
 
 		default:

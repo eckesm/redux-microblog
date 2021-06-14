@@ -1,14 +1,24 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchTitles } from './actions';
 import PostSummary from './PostSummary';
 import './PostsList.css';
 
 const PostsList = () => {
-	const { posts } = useSelector(store => store);
+	const { titles } = useSelector(store => store);
+	const dispatch = useDispatch();
+
+	useEffect(
+		() => {
+			dispatch(fetchTitles());
+		},
+		[ dispatch ]
+	);
+
 	return (
 		<div className="PostsList">
-			{Object.keys(posts).map(id => (
-				<PostSummary key={id} id={id} title={posts[id].title} description={posts[id].description} />
+			{titles.map(post => (
+				<PostSummary key={post.id} id={post.id} title={post.title} description={post.description} />
 			))}
 		</div>
 	);
