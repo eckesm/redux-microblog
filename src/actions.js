@@ -6,7 +6,8 @@ import {
 	ADD_COMMENT,
 	DELETE_COMMENT,
 	FETCH_TITLES,
-	FETCH_POST
+	FETCH_POST,
+	VOTE
 } from './actionTypes';
 
 const API_URL = 'http://localhost:5000/api';
@@ -81,24 +82,24 @@ export function addComment(comment) {
 	return async function(dispatch) {
 		try {
 			const { data } = await axios.post(`${API_URL}/posts/${comment.post_id}/comments`, comment);
-			dispatch(addedComment(data,comment.post_id));
+			dispatch(addedComment(data, comment.post_id));
 		} catch (e) {
 			dispatch(gotError());
 		}
 	};
 }
 
-function addedComment(comment,postId) {
+function addedComment(comment, postId) {
 	return {
-		type : ADD_COMMENT,
+		type    : ADD_COMMENT,
 		comment,
-        postId
+		postId
 	};
 }
 
 // DELETE_COMMENT
 
-export function deleteComment(postId,commentId) {
+export function deleteComment(postId, commentId) {
 	return async function(dispatch) {
 		try {
 			const { data } = await axios.delete(`${API_URL}/posts/${postId}/comments/${commentId}`);
@@ -109,11 +110,11 @@ export function deleteComment(postId,commentId) {
 	};
 }
 
-function deletedComment(postId,commentId, message) {
+function deletedComment(postId, commentId, message) {
 	return {
-		type    : DELETE_COMMENT,
+		type      : DELETE_COMMENT,
 		postId,
-        commentId,
+		commentId,
 		message
 	};
 }
@@ -157,6 +158,28 @@ function gotPost(post) {
 		post
 	};
 }
+
+// VOTE
+
+export function voteOnPost(postId, direction) {
+	return async function(dispatch) {
+		try {
+			const { data } = await axios.post(`${API_URL}/posts/${postId}/vote/${direction}`);
+			dispatch(votedOnPost(postId, data.votes));
+		} catch (e) {
+			dispatch(gotError());
+		}
+	};
+}
+
+function votedOnPost(postId, votes) {
+	return {
+		type   : VOTE,
+		postId,
+		votes
+	};
+}
+
 
 // ERROR
 

@@ -5,13 +5,14 @@ import {
 	ADD_COMMENT,
 	DELETE_COMMENT,
 	FETCH_TITLES,
-	FETCH_POST
+	FETCH_POST,
+	VOTE
 } from './actionTypes';
 
 const INITIAL_STATE = {
-	posts  : {},
-	titles : [],
-	error  : false
+	posts   : {},
+	titles  : [],
+	error   : false
 };
 
 function rootReducer(state = INITIAL_STATE, action) {
@@ -64,6 +65,15 @@ function rootReducer(state = INITIAL_STATE, action) {
 			return {
 				...state,
 				posts : { ...state.posts, [action.post.id]: action.post }
+			};
+
+		case VOTE:
+			const votedPost = state.posts[action.postId];
+			votedPost.votes = action.votes;
+
+			return {
+				...state,
+				posts : { ...state.posts, [action.postId]: votedPost }
 			};
 
 		case 'ERROR':

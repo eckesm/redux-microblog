@@ -4,7 +4,7 @@ import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import BlogHome from './BlogHome';
 import NewPostForm from './NewPostForm';
-import PostDetail from './PostDetail';
+import Post from './Post';
 
 const Routes = () => {
 
@@ -17,7 +17,7 @@ const Routes = () => {
 				<NewPostForm />
 			</Route>
 			<Route exact path="/posts/:postId">
-				<PostDetail />
+				<Post />
 			</Route>
 			<Redirect to="/" />
 		</Switch>

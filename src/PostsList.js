@@ -18,7 +18,8 @@ const PostsList = () => {
 	return (
 		<div className="PostsList">
 			{titles.map(post => (
-				<PostSummary key={post.id} id={post.id} title={post.title} description={post.description} />
+				<PostSummary key={post.id} 
+				id={post.id} title={post.title} description={post.description} votes={post.votes} />
 			))}
 		</div>
 	);

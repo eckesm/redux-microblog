@@ -1,56 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
-import { fetchPost } from './actions';
-import NewPostForm from './NewPostForm';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import Voting from './Voting';
 import Comments from './Comments';
-import { deletePost } from './actions';
+import { voteOnPost, deleteComment } from './actions';
 
-const PostDetail = () => {
-	const { posts } = useSelector(store => store);
-	const { postId } = useParams();
-	const [ editingPost, setEditingPost ] = useState(false);
-	const history = useHistory();
+const PostDetail = ({ post, updateThisPost, deleteThisPost }) => {
+	const { title, description, body, votes, comments } = post;
+	let [ postVotes, setPostVotes ] = useState(votes);
+	let [ postComments, setPostComments ] = useState(comments);
 	const dispatch = useDispatch();
 
-	useEffect(
-		() => {
-			dispatch(fetchPost(postId));
-		},
-		[ dispatch, postId ]
-	);
+	const voteOnThisPost = direction => {
+		if (direction === 'up') {
+			setPostVotes(postVotes + 1);
+		}
+		else {
+			setPostVotes(postVotes - 1);
+		}
 
-	const updateThisPost = () => {
-		setEditingPost(true);
+		dispatch(voteOnPost(post.id, direction));
 	};
 
-	const deleteThisPost = postId => {
-		dispatch(deletePost(postId));
-		history.push('/');
+	const deleteAComment = commentId => {
+		dispatch(deleteComment(post.id, commentId));
+		setPostComments(postComments.filter(comment => comment.id !== commentId));
 	};
-
-	let post = null;
-	if (postId in posts) {
-		post = posts[postId];
-	}
-	else {
-		return <h1>No post with the entered ID.</h1>;
-	}
-
-	if (editingPost) {
-		return <NewPostForm postId={postId} />;
-	}
 
 	return (
 		<div>
-			<h3>{post.title}</h3>
-			<h5>{post.description}</h5>
-			<p>{post.body}</p>
+			<h3>{title}</h3>
+			<h5>{description}</h5>
+			<p>{body}</p>
 			<div>
 				<button onClick={updateThisPost}>Edit</button>
-				<button onClick={() => deleteThisPost(postId)}>Delete</button>
+				<button onClick={deleteThisPost}>Delete</button>
 			</div>
-			<Comments postId={postId} comments={post.comments} />
+
+			<Voting votes={postVotes} voteOnThisPost={voteOnThisPost} />
+			<Comments comments={postComments} deleteAComment={deleteAComment} />
+			
 		</div>
 	);
 };
