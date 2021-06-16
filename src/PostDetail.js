@@ -1,30 +1,8 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
 import Voting from './Voting';
-import Comments from './Comments';
-import { voteOnPost, deleteComment } from './actions';
 
-const PostDetail = ({ post, updateThisPost, deleteThisPost }) => {
-	const { title, description, body, votes, comments } = post;
-	let [ postVotes, setPostVotes ] = useState(votes);
-	let [ postComments, setPostComments ] = useState(comments);
-	const dispatch = useDispatch();
-
-	const voteOnThisPost = direction => {
-		if (direction === 'up') {
-			setPostVotes(postVotes + 1);
-		}
-		else {
-			setPostVotes(postVotes - 1);
-		}
-
-		dispatch(voteOnPost(post.id, direction));
-	};
-
-	const deleteAComment = commentId => {
-		dispatch(deleteComment(post.id, commentId));
-		setPostComments(postComments.filter(comment => comment.id !== commentId));
-	};
+const PostDetail = ({ post, updateThisPost, deleteThisPost, voteOnThisPost }) => {
+	const { title, description, body, votes } = post;
 
 	return (
 		<div>
@@ -36,8 +14,7 @@ const PostDetail = ({ post, updateThisPost, deleteThisPost }) => {
 				<button onClick={deleteThisPost}>Delete</button>
 			</div>
 
-			<Voting votes={postVotes} voteOnThisPost={voteOnThisPost} />
-			<Comments comments={postComments} deleteAComment={deleteAComment} />
+			<Voting votes={votes} voteOnThisPost={voteOnThisPost} />
 			
 		</div>
 	);

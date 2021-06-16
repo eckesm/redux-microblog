@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import { fetchPost } from './actions';
+import { fetchPost, deleteComment } from './actions';
 import NewPostForm from './NewPostForm';
 import PostDetail from './PostDetail';
-import { deletePost, addComment } from './actions';
+import { deletePost, addComment, voteOnPost } from './actions';
 import NewCommentForm from './NewCommentForm';
+import Comments from './Comments';
 
-const Post = () => {
+const Post = props => {
 	const [ editingPost, setEditingPost ] = useState(false);
 	const postId = Number(useParams().postId);
 	const history = useHistory();
@@ -15,16 +16,19 @@ const Post = () => {
 	const dispatch = useDispatch();
 
 	useEffect(
-		() => {
-			// async function getPostfromAPI() {
+		function loadPostWhenPostOrIdChanges() {
+			async function getPost() {
 				dispatch(fetchPost(postId));
-			// }
-			// if (!post) {
-				// getPostfromAPI();
-			// }
+			}
+			if (!post) {
+				getPost();
+			}
 		},
 		[ dispatch, postId, post ]
 	);
+
+	// console.log(postId)
+	// console.log(post)
 
 	const updateThisPost = () => {
 		setEditingPost(true);
@@ -35,14 +39,19 @@ const Post = () => {
 		history.push('/');
 	};
 
-    const addAComment = formData => {
+	const deleteAComment = commentId => {
+		dispatch(deleteComment(postId, commentId));
+	};
+
+	const addAComment = formData => {
 		dispatch(addComment(formData));
 	};
 
-	if (!post) {
-		return <h1>Loading...</h1>;
-	}
+	const voteOnThisPost = direction => {
+		dispatch(voteOnPost(postId, direction));
+	};
 
+	if (!post) return <h1>Loading...</h1>;
 
 	if (editingPost) {
 		return <NewPostForm postId={postId} />;
@@ -54,8 +63,10 @@ const Post = () => {
 				post={post}
 				updateThisPost={updateThisPost}
 				deleteThisPost={deleteThisPost}
+				voteOnThisPost={voteOnThisPost}
 			/>
-            <NewCommentForm postId={post.id} addAComment={addAComment} />
+			<Comments comments={post.comments || []} deleteAComment={deleteAComment} />
+			<NewCommentForm postId={post.id} addAComment={addAComment} />
 		</div>
 	);
 };
